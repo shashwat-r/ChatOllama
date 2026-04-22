@@ -6,52 +6,115 @@ body {
   background: #0f1115;
   color: #e6e6e6;
   height: 100vh;
-  display: flex;
-  flex-direction: column;
+  overflow: hidden;
 }
 
-.topbar {
+.app-shell {
+  height: 100vh;
   display: flex;
-  gap: 10px;
+  flex-direction: row;
+  background: #0f1115;
+}
+
+.settings-sidebar {
+  width: 320px;
+  min-width: 320px;
+  max-width: 320px;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #222;
+  background: #15181f;
+  transition: width 0.2s ease, min-width 0.2s ease, max-width 0.2s ease;
+  overflow: hidden;
+}
+
+.settings-sidebar.collapsed {
+  width: 64px;
+  min-width: 64px;
+  max-width: 64px;
+}
+
+.settings-header {
+  display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  padding: 10px 14px;
+  gap: 10px;
+  padding: 12px;
   border-bottom: 1px solid #222;
   background: #15181f;
 }
 
-.topbar label {
+.settings-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #ddd;
+  white-space: nowrap;
+}
+
+.settings-sidebar.collapsed .settings-title {
+  display: none;
+}
+
+.settings-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  overflow-y: auto;
+}
+
+.settings-sidebar.collapsed .settings-panel {
+  display: none;
+}
+
+.settings-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.settings-group label {
   font-size: 14px;
   color: #bbb;
 }
 
-.topbar input[type="text"],
-.topbar select {
+.settings-group input[type="text"],
+.settings-group select {
+  width: 100%;
   padding: 8px 10px;
   border: 1px solid #333;
   border-radius: 8px;
   background: #0f1115;
   color: #eee;
-  min-width: 180px;
   font: inherit;
 }
 
-.topbar select {
-  min-width: 220px;
+.label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
 }
 
-.topbar input:focus,
-.topbar select:focus,
+.label-row label {
+  margin: 0;
+}
+
+.settings-group input:focus,
+.settings-group select:focus,
 textarea:focus {
   border-color: #555;
   outline: none;
+}
+
+.settings-note {
+  margin-top: 4px;
 }
 
 .toggle-wrap {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 10px;
+  padding: 10px 12px;
   border: 1px solid #333;
   border-radius: 10px;
   background: #1a1f28;
@@ -67,6 +130,14 @@ textarea:focus {
   flex-direction: column;
   gap: 14px;
   background: #0f1115;
+}
+
+.main-pane {
+  flex: 1;
+  min-width: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .row {
@@ -205,7 +276,7 @@ textarea:focus {
   margin-top: auto;
   display: flex;
   justify-content: flex-end;
-  align-items: center;
+  align-items: flex-start;
   gap: 6px;
   padding: 8px 10px;
   border-top: 1px solid #2a2f3a;
@@ -214,12 +285,11 @@ textarea:focus {
 
 .message-meta {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  flex-direction: column;
+  gap: 2px;
   color: #8a93a5;
   font-size: 12px;
-  line-height: 1.2;
-  flex-wrap: wrap;
+  line-height: 1.35;
   margin-right: auto;
 }
 
@@ -317,4 +387,16 @@ textarea {
 @keyframes blink {
   0%, 50%, 100% { opacity: 1; }
   25%, 75% { opacity: 0; }
+}
+
+@media (max-width: 900px) {
+  .settings-sidebar {
+    width: 280px;
+    min-width: 280px;
+    max-width: 280px;
+  }
+
+  .card {
+    width: min(760px, 94%);
+  }
 }
