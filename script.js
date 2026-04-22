@@ -143,6 +143,43 @@ function syncModelDropdownTitle() {
   modelDropdown.title = selectedOption ? selectedOption.textContent : "";
 }
 
+function isEditableElement(el) {
+  if (!el) return false;
+
+  const tag = el.tagName;
+  return tag === "INPUT" || tag === "TEXTAREA" || el.isContentEditable;
+}
+
+function shouldRedirectKeyToPrompt(e) {
+  if (e.defaultPrevented) return false;
+  if (e.isComposing) return false;
+
+  if (e.ctrlKey || e.metaKey || e.altKey) return false;
+
+  const ignoredKeys = new Set([
+    "Shift",
+    "Control",
+    "Alt",
+    "Meta",
+    "Fn",
+    "Tab",
+    "CapsLock",
+    "Escape"
+  ]);
+
+  if (ignoredKeys.has(e.key)) return false;
+
+  return true;
+}
+
+function scrollChatToTop() {
+  chatEl.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function scrollChatToBottom() {
+  chatEl.scrollTo({ top: chatEl.scrollHeight, behavior: "smooth" });
+}
+
 async function loadModelList() {
   const previousValue = modelDropdown.value;
   modelDropdown.innerHTML = `<option value="" disabled selected>Select model</option>`;
@@ -740,9 +777,81 @@ sendBtn.addEventListener("click", async () => {
 });
 
 promptEl.addEventListener("keydown", async (e) => {
+  if (e.key === "Escape") {
+    e.preventDefault();
+    promptEl.blur();
+    return;
+  }
+
   if (e.key === "Enter" && !e.shiftKey) {
     e.preventDefault();
     sendBtn.click();
+  }
+});
+
+document.addEventListener("keydown", (e) => {
+  const active = document.activeElement;
+
+  // ⬆️⬇️ Scroll shortcuts (Cmd/Ctrl + Arrow)
+  if ((e.metaKey || e.ctrlKey) && !e.altKey && !e.shiftKey) {
+    if (e.key === "ArrowUp") {
+      e.preventDefault();
+      scrollChatToTop();
+      return;
+    }
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      scrollChatToBottom();
+      return;
+    }
+  }
+
+  // Do not interfere with typing fields
+  if (isEditableElement(active)) return;
+
+  if (!shouldRedirectKeyToPrompt(e)) return;
+
+  promptEl.focus();
+
+  if (e.key.length === 1) {
+    e.preventDefault();
+
+    const start = promptEl.selectionStart ?? promptEl.value.length;
+    const end = promptEl.selectionEnd ?? promptEl.value.length;
+    const value = promptEl.value;
+
+    promptEl.value = value.slice(0, start) + e.key + value.slice(end);
+    const caret = start + e.key.length;
+    promptEl.setSelectionRange(caret, caret);
+    return;
+  }
+
+  if (e.key === "Enter") {
+    e.preventDefault();
+    return;
+  }
+
+  if (e.key === "Backspace" || e.key === "Delete") {
+    e.preventDefault();
+
+    const start = promptEl.selectionStart ?? promptEl.value.length;
+    const end = promptEl.selectionEnd ?? promptEl.value.length;
+    const value = promptEl.value;
+
+    if (start !== end) {
+      promptEl.value = value.slice(0, start) + value.slice(end);
+      promptEl.setSelectionRange(start, start);
+      return;
+    }
+
+    if (e.key === "Backspace" && start > 0) {
+      promptEl.value = value.slice(0, start - 1) + value.slice(end);
+      promptEl.setSelectionRange(start - 1, start - 1);
+    } else if (e.key === "Delete" && start < value.length) {
+      promptEl.value = value.slice(0, start) + value.slice(start + 1);
+      promptEl.setSelectionRange(start, start);
+    }
   }
 });
 
