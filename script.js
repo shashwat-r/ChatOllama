@@ -110,6 +110,7 @@ function clamp(value, min, max) {
 // ========================================
 function updateEmptyState() {
   const hasMessages = chatEl.querySelector(".row");
+  const emptyStateEl = document.getElementById("emptyState");
   if (hasMessages) {
     emptyStateEl.style.display = "none";
   } else {
@@ -1111,7 +1112,7 @@ clearBtn.addEventListener("click", () => {
   promptEl.value = "";
   promptEl.focus();
 
-  window.emptyStateEl = document.getElementById("emptyState");
+  updateEmptyState();
 });
 
 // ========================================
