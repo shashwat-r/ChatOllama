@@ -12,7 +12,7 @@ Simple Local Chat Interface For Ollama
     ```
 - Here's the command to launch a local server for the Chat UI
   - ```
-    make chat_ollama
+    make ollama_chat_playground
     ```
   - Now, the Chat UI is ready to be used. It will be hosted at
   - ```
