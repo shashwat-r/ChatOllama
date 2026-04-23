@@ -24,7 +24,7 @@
     <!-- ========================= -->
     <div class="title-bar">
       <div class="title-bar-brand">
-        <img src="favicon.png" alt="App Icon" class="title-icon" />
+        <img src="favicon.png" alt="Ollama Chat Playground Icon" class="title-icon" />
         <span>Ollama Chat Playground</span>
       </div>
     </div>
@@ -58,7 +58,18 @@
 
           <!-- MODEL INPUT -->
           <div class="settings-group">
-            <label for="model">Model</label>
+            <div class="label-row">
+              <label for="model">Model</label>
+              <button
+                id="pullModelBtn"
+                class="icon-btn"
+                type="button"
+                title="Pull model"
+                aria-label="Pull model"
+              >
+                ↓
+              </button>
+            </div>
             <input id="model" type="text" placeholder="Specify model" />
           </div>
 
@@ -126,7 +137,7 @@
         <div id="chat" class="chat-wrap">
           <!-- EMPTY STATE -->
           <div id="emptyState" class="empty-state">
-            <img src="favicon.png" alt="App Icon" class="empty-icon" />
+            <img src="favicon.png" alt="Ollama Chat Playground Icon" class="empty-icon" />
             <div class="empty-text">
               Welcome to Ollama Chat Playground 👋
             </div>

@@ -9,6 +9,7 @@ const clearBtn = document.getElementById("clearBtn");
 const modelEl = document.getElementById("model");
 const modelDropdown = document.getElementById("modelDropdown");
 const refreshModelsBtn = document.getElementById("refreshModelsBtn");
+const pullModelBtn = document.getElementById("pullModelBtn");
 const hostEl = document.getElementById("host");
 const apiPathEl = document.getElementById("apiPath");
 const thinkToggle = document.getElementById("thinkToggle");
@@ -193,6 +194,33 @@ function buildTagsUrl() {
   }
 
   return `${host}/api/tags`;
+}
+
+function buildPullUrl() {
+  const host = normalizeHost(hostEl.value);
+  const apiPath = normalizePath(apiPathEl.value);
+
+  if (apiPath.endsWith("/chat")) {
+    return `${host}${apiPath.slice(0, -"/chat".length)}/pull`;
+  }
+
+  if (apiPath.endsWith("/generate")) {
+    return `${host}${apiPath.slice(0, -"/generate".length)}/pull`;
+  }
+
+  if (apiPath.endsWith("/tags")) {
+    return `${host}${apiPath.slice(0, -"/tags".length)}/pull`;
+  }
+
+  if (apiPath.endsWith("/pull")) {
+    return `${host}${apiPath}`;
+  }
+
+  if (apiPath.endsWith("/api")) {
+    return `${host}${apiPath}/pull`;
+  }
+
+  return `${host}/api/pull`;
 }
 
 function syncModelDropdownTitle() {
@@ -393,6 +421,83 @@ async function loadModelList() {
   } finally {
     modelDropdown.disabled = false;
     refreshModelsBtn.disabled = false;
+  }
+}
+
+async function pullModel() {
+  const modelName = modelEl.value.trim();
+
+  if (!modelName) {
+    createMessageCard("system", "**Pull model failed:** Please enter a model name first.", {
+      getRawText: () => "Pull model failed: Please enter a model name first.",
+      startTime: new Date()
+    });
+    return;
+  }
+
+  const startedAt = new Date();
+  const startedMs = Date.now();
+
+  if (pullModelBtn) {
+    pullModelBtn.disabled = true;
+  }
+
+  try {
+    const response = await fetch(buildPullUrl(), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        name: modelName,
+        stream: false
+      })
+    });
+
+    if (!response.ok) {
+      const serverError = await extractErrorFromResponse(response);
+      throw new Error(serverError);
+    }
+
+    let data = null;
+    try {
+      data = await response.json();
+    } catch (_) {
+      data = null;
+    }
+
+    const statusText = data?.status ? `\n\nStatus: ${data.status}` : "";
+    const digestText = data?.digest ? `\nDigest: ${data.digest}` : "";
+
+    messages.push({
+      role: "system",
+      content: `Pulled model: ${modelName}${statusText}${digestText}`
+    });
+
+    createMessageCard("system", `**Pulled model:** ${modelName}${statusText}${digestText}`, {
+      getRawText: () => `Pulled model: ${modelName}${statusText.replaceAll("\n", " ")}${digestText.replaceAll("\n", " ")}`,
+      startTime: startedAt,
+      durationMs: Date.now() - startedMs
+    });
+
+    await loadModelList();
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+
+    messages.push({
+      role: "system",
+      content: `Pulling model failed.\n\nModel:\n${modelName}\n\nError:\n${message}`
+    });
+
+    createMessageCard("system", `**Error pulling model:** ${message}`, {
+      getRawText: () => `Error pulling model: ${message}`,
+      startTime: startedAt,
+      durationMs: Date.now() - startedMs
+    });
+  } finally {
+    if (pullModelBtn) {
+      pullModelBtn.disabled = false;
+    }
   }
 }
 
@@ -986,6 +1091,10 @@ modelEl.addEventListener("input", () => {
 
 refreshModelsBtn.addEventListener("click", loadModelList);
 
+if (pullModelBtn) {
+  pullModelBtn.addEventListener("click", pullModel);
+}
+
 sendBtn.addEventListener("click", async () => {
   if (isGenerating) {
     if (abortController) {
@@ -1089,7 +1198,7 @@ clearBtn.addEventListener("click", () => {
 
   chatEl.innerHTML = `
     <div id="emptyState" class="empty-state">
-      <img src="favicon.png" alt="App Icon" class="empty-icon" />
+      <img src="favicon.png" alt="Ollama Chat Playground Icon" class="empty-icon" />
       <div class="empty-text">
         Welcome to Ollama Chat Playground 👋
       </div>
