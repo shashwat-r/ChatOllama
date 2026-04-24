@@ -1,118 +1,162 @@
 # Ollama Chat Playground
 
-<p align="center"><a href="https://shashwat-r.github.io/OllamaChatPlayground/"><img src="/favicon.png" height="128" width="128" alt="Open Preview" title="Click To Open Ollama Chat Playground"/></a><br><a href="https://shashwat-r.github.io/OllamaChatPlayground/">Click icon to launch Ollama Chat Playground</a></p>
+<p align="center">
+  <a href="https://shashwat-r.github.io/OllamaChatPlayground/">
+    <img src="/favicon.png" height="128" width="128" alt="Open Preview" title="Click to open Ollama Chat Playground"/>
+  </a><br>
+  <a href="https://shashwat-r.github.io/OllamaChatPlayground/">
+    Click the icon to launch Ollama Chat Playground
+  </a>
+</p>
 
-### Introduction
-Simple Local Chat Interface For Ollama.
+## Introduction
 
-Specify the host, and select an Ollama Model, available through a dropdown in the playground, and you're ready to chat 👍.
+A simple local chat interface for Ollama.
+
+Specify the host and select an Ollama model (available via a dropdown in the playground), and you're ready to chat 👍
 
 <img src="/previews/preview-01.png">
-<sup>*Preview Image may change with new UI updates.</sup>
+<sup>*Preview image may change with future UI updates.</sup>
 
-### Setup and Usage
+## Setup and Usage
 
-#### Assumptions
-- These instructions assume a Linux or MacOS based system, where `python3` and `make` commands are (usually) already available. In case they are not, do perform a standard installation. The setup is quite minimal and should be tweakable to run on Windows systems as well in case it doesn't work as is.
-- This app needs access to a running ollama server locally or remotely. (There's a field to specify the host.)
+### Assumptions
 
-Here are the methods to run this playground.
+* These instructions assume a Linux or macOS-based system where `python3` and `make` are usually available. If not, install them using standard methods. The setup is minimal and can be adapted for Windows if needed.
+* This app requires access to a running Ollama server (local or remote). A field is provided in the UI to specify the host.
 
-#### Method 1: (Easiest) Local Ollama Server, Default Ollama Chat Playground Server
-- This is the easiest setup as it involves no downloads of any kind. It just needs your ollama server running locally.
-- Enable your local Ollama Server to get access from this repo's Github Pages
-  - You need to run the `ollama serve` command locally in the following manner to prevent CORS related browser errors.
-  - ```
-    OLLAMA_HOST=0.0.0.0:11434 OLLAMA_ORIGINS=https://shashwat-r.github.io ollama serve
-    ```
-- Access the Ollama Chat Playground at https://shashwat-r.github.io/OllamaChatPlayground
-- Done 👍
+## Methods to Run the Playground
 
-#### Method 2: Remote Ollama Server, Default Ollama Chat Playground Server
-- Instead of hosting the Ollama Server locally, you could also host it remotely using a plethora of free or paid services. One no cost example you could try is [Google Colab](colab.research.google.com), where you host the server and expose it via services like [Ngrok](ngrok.com).
-- Nevertheless, wherever the notebook is hosted, you'll need to run the same command mentioned in the previous section when running the `ollama serve` command.
-  - ```
-    OLLAMA_HOST=0.0.0.0:11434 OLLAMA_ORIGINS=https://shashwat-r.github.io ollama serve
-    ```
-- Access the Ollama Chat Playground at https://shashwat-r.github.io/OllamaChatPlayground
-- Done 👍
+### Method 1: (Easiest) Local Ollama Server + Hosted Playground (GitHub Pages)
 
-#### Method 3: (Standard) Local Ollama Server, Local Ollama Chat Playground Server
-- This is the standard way to use this application. Clone this repo or download the files using the green `<> Code` button displayed on the row below the title.
-- Start your local Ollama Server. You can use the standard `ollama serve` command, or use the minimal wrapper provided in this repo's Makefile by running the command:
-  - ```
-    make ollama_serve
-    ```
-  - This command automatically sets the `OLLAMA_HOST` and `OLLAMA_ORIGINS` and runs the `ollama serve` command with it, as shown in the previous methods. This enables you to experiment with the Ollama Chat Playground at https://shashwat-r.github.io/OllamaChatPlayground with your local ollama server at:
-  - ```
-    http://localhost:11434
-    ```
-- Start the local Ollama Chat Playground by running:
-  - ```
-    make ollama_chat_playground
-    ```
-  - This will automatically launch the Playground UI in your browser at:
-  - ```
-    http://localhost:8000
-    ```
-  - In case it doesn't open automatically, do open the above link manually.
-- Done 👍
+* This is the simplest setup—no downloads required. You only need a local Ollama server.
+* Run your local Ollama server with CORS enabled:
 
-#### Method 4: Remote Ollama Server, Local Ollama Chat Playground Server
-- In this case, you'll still need to download the files, as in the previous method.
-- However, you'll just need to run the command to start the local Ollama Chat Playground.
-  - ```
-    make ollama_chat_playground
-    ```
-  - This will automatically launch the Playground UI in your browser at:
-  - ```
-    http://localhost:8000
-    ```
-  - In case it doesn't open automatically, do open the above link manually.
-- You can manually enter the link of the remote ollama server in the playground, and start using it.
-- Done 👍
+```bash
+OLLAMA_HOST=0.0.0.0:11434 OLLAMA_ORIGINS=https://shashwat-r.github.io ollama serve
+```
 
-#### Method 5: Local Ollama Server, Remote Ollama Chat Playground Server
-- This is quite similar to Method 1, and you will need to find the origin of your playground. In case you don't know it, you will be able to find it by running the following command in the Inspect Element Console of your browser, at the remote ollama chat playground webpage.
-  - ```
-    window.location.origin
-    ```
-- This would provide the `<ollama_chat_playground_origin>` for your ollama server, and you could use it in the `ollama serve` command to enable it to get accessed by the remote playground
-  - ```
-    OLLAMA_HOST=0.0.0.0:11434 OLLAMA_ORIGINS=<ollama_chat_playground_origin> ollama serve
-    ```
-- Done 👍
+* Open the playground: [https://shashwat-r.github.io/OllamaChatPlayground](https://shashwat-r.github.io/OllamaChatPlayground)
+* Done 👍
 
-#### Method 6: Remote Ollama Server, Remote Ollama Chat Playground Server
-- This is quite similar to Method 2, and just like the previous method, you'll need to find the origin of your playground by running the following command in the Inspect Element Console of your browser, at the remote ollama chat playground webpage.
-  - ```
-    window.location.origin
-    ```
-- This would provide the `<ollama_chat_playground_origin>` for your ollama server, and you could use it in the `ollama serve` command during the setup at the remote server location to enable it to get accessed by the remote playground
-  - ```
-    OLLAMA_HOST=0.0.0.0:11434 OLLAMA_ORIGINS=<ollama_chat_playground_origin> ollama serve
-    ```
-- Done 👍
+### Method 2: Remote Ollama Server + Hosted Playground
 
-### Additional Comments
-- Ideally, opening the `index.html` file locally in your browser should have been sufficient to use this playground, however, the browser enforces CORS related security checks to prevent `file://` urls from interacting with hosted urls. Thus, you need to run the above command to start a local server.
-- In case you need to change the port at which the playground runs, you could tweak the `Makefile`. It's a minimal and understandable file.
-- You could open it in your favorite editor or run the following command:
-  - ```
-    make edit
-    ```
-- And to get a list of commands, you could simply run either of the two commands given below.
-  - ```
-    make help
-    ```
-  - ```
-    make
-    ```
+* Instead of running Ollama locally, you can host it remotely (e.g., via Google Colab + ngrok).
+* Regardless of where it's hosted, run:
 
-### Conclusion
+```bash
+OLLAMA_HOST=0.0.0.0:11434 OLLAMA_ORIGINS=https://shashwat-r.github.io ollama serve
+```
 
-This is a hobby project and is in no way comparable to the [Official Ollama Chatbot](https://docs.ollama.com/integrations/onyx), but it is a fun exploration into the nuances behind LLMs and ChatBots.
+* Then access the playground: [https://shashwat-r.github.io/OllamaChatPlayground](https://shashwat-r.github.io/OllamaChatPlayground)
+* Done 👍
 
-The UI is workable, but is a piece of work and needs updates. However it's fun to open up Developer Tools and tinker around the elements and networking calls to understand what's happening under the hood.
+### Method 3: (Standard) Local Ollama Server + Local Playground
 
-Hope you have fun with this too 👍
+* Clone or download this repository.
+* Start Ollama:
+
+```bash
+make ollama_serve
+```
+
+This wraps:
+
+```bash
+OLLAMA_HOST=0.0.0.0:11434 OLLAMA_ORIGINS=https://shashwat-r.github.io ollama serve
+```
+
+* Your Ollama server will run at:
+
+```text
+http://localhost:11434
+```
+
+* Start the playground:
+
+```bash
+make ollama_chat_playground
+```
+
+* Open: http://localhost:8000
+* Done 👍
+
+### Method 4: Remote Ollama Server + Local Playground
+
+* Download the repo.
+* Start the playground:
+
+```bash
+make ollama_chat_playground
+```
+
+* Open: http://localhost:8000
+
+* Enter your remote Ollama server URL in the UI.
+* Done 👍
+
+### Method 5: Local Ollama Server + Remote Playground
+
+* Similar to Method 1, but with a custom or different hosted UI.
+* Find your playground origin in the browser console:
+
+```js
+window.location.origin
+```
+
+* Run:
+
+```bash
+OLLAMA_HOST=0.0.0.0:11434 OLLAMA_ORIGINS=<ollama_chat_playground_origin> ollama serve
+```
+* Open your remote playground.
+* Done 👍
+
+### Method 6: Remote Ollama Server + Remote Playground
+
+* Similar to Method 2, but fully remote.
+* Get the playground origin:
+
+```js
+window.location.origin
+```
+
+* Run on the server:
+
+```bash
+OLLAMA_HOST=0.0.0.0:11434 OLLAMA_ORIGINS=<ollama_chat_playground_origin> ollama serve
+```
+* Open your remote playground.
+* Done 👍
+
+## Additional Notes
+
+* Opening `index.html` directly (`file://`) will **not work** due to browser CORS restrictions. You must serve it via a local server.
+* To change the playground port, edit the `Makefile`:
+
+```bash
+make edit
+```
+
+* To see available commands:
+
+```bash
+make help
+```
+
+or simply:
+
+```bash
+make
+```
+
+## Conclusion
+
+This is a hobby project and is not intended to compete with the
+[Official Ollama Chatbot](https://docs.ollama.com/integrations/onyx).
+
+It’s a lightweight playground for exploring how LLM chat systems work under the hood.
+
+The UI is functional but still evolving. A great way I learn more is by opening Developer Tools and inspecting network calls, streaming behavior, and rendering.
+
+Hope you enjoy experimenting with it 👍
